@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.urls import reverse
 
 # Create your views here.
 
@@ -74,6 +75,15 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
     # return HttpResponse(challenge_text); 
     
 
+#  --------------- Hard coded redirect path -------------------
+# def monthly_challenge_by_month(request, month):
+#     months = list(monthly_challenges.keys())
+    
+#     if month > len(months):
+#         return HttpResponseNotFound("This month is unknown and unsupported")
+#     redirect_month = months[month - 1]
+#     return HttpResponseRedirect("/challenges/"+ redirect_month)
+
 monthly_challenges = {
     "january": "New Years Resolution, Start working out and get that body on point.",
     "february": "Work on algorithms and become a pro!!",
@@ -89,18 +99,40 @@ monthly_challenges = {
     "december": "Celebrate Birthday with the family",
 }
 
-def monthly_challenge(request, month):
-    try:
-        challenge_text = monthly_challenges[month]
-        return HttpResponse(challenge_text)
-    except:
-        return HttpResponseNotFound("This month is unknown and unsupported")
-    
 def monthly_challenge_by_month(request, month):
     months = list(monthly_challenges.keys())
     
     if month > len(months):
         return HttpResponseNotFound("This month is unknown and unsupported")
-    
     redirect_month = months[month - 1]
-    return HttpResponseRedirect("/challenges/"+ redirect_month)
+    redirect_path = reverse("month-challenge", args=[redirect_month])
+    return HttpResponseRedirect(redirect_path)
+
+def monthly_challenge(request, month):
+    try:
+        challenge_text = monthly_challenges[month]
+        response_data = f"<h1>{challenge_text}</h1>"
+        return HttpResponse(response_data)
+    except:
+        return HttpResponseNotFound("<h1>This month is unknown and unsupported</h1>")
+    
+def index(request):
+    months = list(monthly_challenges.keys())
+    list_item = ""
+        
+    for month in months:
+        capitalized_month = month.capitalize()
+        month_path = reverse("month-challenge", args=[month])
+        list_item += f"<li><a href=\"{month_path}\">{capitalized_month}</a></li>"
+        
+        response_data = f"<ul><h1>{list_item}</h1></ul>"
+    return HttpResponse(response_data)
+
+# ------------ my version work perfectly fine --------------
+# def index(request):
+#     months = list(monthly_challenges.keys())
+#     response_data = ""
+        
+#     for month in months:
+#         response_data = response_data + f'<h1><a href="{month}">{month.capitalize()}</a></h1><br>'
+#     return HttpResponse(response_data)
