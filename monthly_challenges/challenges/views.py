@@ -108,14 +108,6 @@ def monthly_challenge_by_month(request, month):
     redirect_path = reverse("month-challenge", args=[redirect_month])
     return HttpResponseRedirect(redirect_path)
 
-def monthly_challenge(request, month):
-    try:
-        challenge_text = monthly_challenges[month]
-        response_data = f"<h1>{challenge_text}</h1>"
-        return HttpResponse(response_data)
-    except:
-        return HttpResponseNotFound("<h1>This month is unknown and unsupported</h1>")
-    
 def index(request):
     months = list(monthly_challenges.keys())
     list_item = ""
@@ -127,6 +119,16 @@ def index(request):
         
         response_data = f"<ul><h1>{list_item}</h1></ul>"
     return HttpResponse(response_data)
+
+def monthly_challenge(request, month):
+    try:
+        challenge_text = monthly_challenges[month]
+        return render(request, "challenges/challenge.html", {
+            "text": challenge_text,
+            "month_name": month.capitalize(),
+        })
+    except:
+        return HttpResponseNotFound("<h1>This month is unknown and unsupported</h1>")
 
 # ------------ my version work perfectly fine --------------
 # def index(request):
