@@ -19,7 +19,7 @@ urlpatterns = [
     
     # --------- Dynamic paths ----------
     # path("<str:month>", views.monthly_challenge) // no dynamic name | ex. month-challenge 
-    path("", views.index),
+    path("", views.index, name="index"),
     path("<int:month>", views.monthly_challenge_by_month),
     path("<str:month>", views.monthly_challenge, name="month-challenge")
 ]

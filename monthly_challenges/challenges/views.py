@@ -87,7 +87,7 @@ from django.urls import reverse
 monthly_challenges = {
     "january": "New Years Resolution, Start working out and get that body on point.",
     "february": "Work on algorithms and become a pro!!",
-    "march": "Add More websites to portfolio",
+    "march": None,
     "april": "learn a new programming language",
     "may": "Go on a date with girlfriend",
     "june": "Go on vacation to Dominican Republic",
@@ -110,22 +110,17 @@ def monthly_challenge_by_month(request, month):
 
 def index(request):
     months = list(monthly_challenges.keys())
-    list_item = ""
-        
-    for month in months:
-        capitalized_month = month.capitalize()
-        month_path = reverse("month-challenge", args=[month])
-        list_item += f"<li><a href=\"{month_path}\">{capitalized_month}</a></li>"
-        
-        response_data = f"<ul><h1>{list_item}</h1></ul>"
-    return HttpResponse(response_data)
+
+    return render(request, "challenges/index.html", {
+        "months": months
+    })
 
 def monthly_challenge(request, month):
     try:
         challenge_text = monthly_challenges[month]
         return render(request, "challenges/challenge.html", {
             "text": challenge_text,
-            "month_name": month.capitalize(),
+            "month_name": month,
         })
     except:
         return HttpResponseNotFound("<h1>This month is unknown and unsupported</h1>")
